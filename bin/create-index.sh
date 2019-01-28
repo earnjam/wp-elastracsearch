@@ -1,0 +1,9 @@
+#!/bin/bash
+# You can run this script after spinning up ElasticSearch in order to
+# create the required index and configure the correct document mapping. 
+
+# Create the index
+curl -X PUT "localhost:9200/wptrac" -H 'Content-Type: application/json' -d '{}'
+
+# Configure mapping
+curl -X PUT "localhost:9200/wptrac/_mapping/_doc" -H 'Content-Type: application/json' -d '{"properties":{"all_content":{"type":"text"},"cc":{"type":"keyword"},"component":{"type":"keyword"},"created":{"type":"date"},"description":{"type":"text","copy_to":["all_content"]},"dest":{"properties":{"index":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"focuses":{"type":"keyword"},"keywords":{"type":"keyword"},"link":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"milestone":{"type":"keyword"},"owner":{"type":"keyword"},"priority":{"type":"keyword"},"reporter":{"type":"keyword"},"resolution":{"type":"keyword"},"script":{"properties":{"source":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"severity":{"type":"keyword"},"source":{"properties":{"index":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"type":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}}}},"status":{"type":"keyword"},"summary":{"type":"text","copy_to":["all_content"]},"ticket_type":{"type":"keyword"},"updated":{"type":"date"},"updates":{"type":"nested","properties":{"comment":{"type":"text","copy_to":["all_content"]},"comment_id":{"type":"short"},"link":{"type":"keyword"},"new":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"new_value":{"type":"keyword"},"old_value":{"type":"keyword"},"previous":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"replying_to":{"type":"short"},"time":{"type":"date"},"update_type":{"type":"keyword"},"user":{"type":"keyword"}}},"version":{"type":"keyword"}}}'

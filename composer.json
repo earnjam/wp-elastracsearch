@@ -1,0 +1,19 @@
+{
+    "name": "earnjam/wp-elastracsearch",
+    "description": "Indexes WordPress Trac into an Elasticsearch cluster",
+    "authors": [
+        {
+            "name": "William Earnhardt",
+            "email": "wearnhardt@gmail.com"
+        }
+    ],
+    "require": {
+        "jakoch/php-trac-rpc": "~1.0",
+		"elasticsearch/elasticsearch": "~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "earnjam\\": "src/"
+        }
+    }
+}

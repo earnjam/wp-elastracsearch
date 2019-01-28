@@ -1,0 +1,44 @@
+#!/usr/bin/env php
+<?php
+/**
+ * PHP CLI script for indexing any new WordPress Trac updates
+ * 
+ * This should be called regularly from a system cron. It will check the
+ * Elasticsearch cluster for the latest updated document, then index any Trac
+ * tickets that have had updates since that date/time. 
+ */
+namespace earnjam;
+
+// Prevent any potential timeouts
+set_time_limit(0);
+
+// Autoload our required classes and libraries
+require dirname( dirname( __FILE__ ) ) . '/vendor/autoload.php';
+
+// Initialize the Trac/Elasticsearch Utility class
+$wpelastrac = new WPElasTrac();
+
+$last_update_query = [
+	'index' => $wpelastrac->index,
+	'type' => $wpelastrac->type,
+	'size' => 1,
+	'from' => 0,
+	'body' => [
+		'sort' => [ [ 'updated' => [ 'order' => 'desc' ] ], ],
+	]
+];
+// Get the ticket that was last updated in the Elasticsearch cluster
+$last_updated_ticket = $wpelastrac->client->search( $last_update_query );
+// Extract the date in a format we can use in our Trac URL
+$last_update = urlencode( date( 'm/d/Y H:i:s', $last_updated_ticket['hits']['hits'][0]['_source']['updated'] / 1000 ) );
+
+// URL to get a CSV list of ticket IDs that have been updated since the above date
+$trac_activity = "https://core.trac.wordpress.org/query?status=accepted&status=assigned&status=closed&status=new&status=reopened&status=reviewing&changetime=$last_update..&col=id&order=changetime&format=csv";
+$updated_tickets = str_getcsv( file_get_contents( $trac_activity ), "\n" );
+// Remove the header line from the CSV
+array_shift( $updated_tickets );
+
+// Re-index each of the updated tickets
+foreach( $updated_tickets as $id ) {
+	$wpelastrac->index( $id );
+}
