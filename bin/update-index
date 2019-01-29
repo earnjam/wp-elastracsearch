@@ -29,8 +29,8 @@ $last_update_query = [
 ];
 // Get the ticket that was last updated in the Elasticsearch cluster
 $last_updated_ticket = $wpelastrac->client->search( $last_update_query );
-// Extract the date in a format we can use in our Trac URL
-$last_update = urlencode( date( 'm/d/Y H:i:s', $last_updated_ticket['hits']['hits'][0]['_source']['updated'] / 1000 ) );
+// Extract the date in a format we can use in our Trac URL. Add one second
+$last_update = urlencode( date( 'm/d/Y H:i:s', ( $last_updated_ticket['hits']['hits'][0]['_source']['updated'] / 1000 ) + 1 ) );
 
 // URL to get a CSV list of ticket IDs that have been updated since the above date
 $trac_activity = "https://core.trac.wordpress.org/query?status=accepted&status=assigned&status=closed&status=new&status=reopened&status=reviewing&changetime=$last_update..&col=id&order=changetime&format=csv";
