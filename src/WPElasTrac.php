@@ -125,7 +125,11 @@ class WPElasTrac {
 
 		if ( ! empty( $updates ) ) {
 			foreach ( $updates as $item ) {
-				$data['updates'][] = $this->parse_update( $id, $item );
+				$update = $this->parse_update( $id, $item );
+				// Don't index cc because it can leak emails
+				if ( 'cc' !== $update['update_type'] ) {
+					$data['updates'][] = $update;
+				}
 			}
 		}
 
