@@ -46,12 +46,14 @@ class WPElasTrac {
 	/**
 	 * Indexes a specific Trac ticket into the ES cluster
 	 *
-	 * @param int $id ID of the ticket to index
+	 * @param int  $id     ID of the ticket to index
+	 * @param bool $encode Whether or not to run utf8_encode on the open-entry fields
+	 *
 	 * @return mixed Associative array containing a decoded version of the JSON that Elasticsearch returns or false on invalid ticket
 	 */
-	function index( $id ) {
+	function index( $id, $encode = false ) {
 
-		$data = $this->get_ticket_data( $id );
+		$data = $this->get_ticket_data( $id, $encode );
 
 		if ( empty( $data ) ) {
 			return false;
@@ -64,7 +66,21 @@ class WPElasTrac {
 			'body'  => $data,
 		);
 
-		return $this->client->index( $params );
+		try {
+			// Try once to index the ticket like normal
+			return $this->client->index( $params );
+		} catch ( \Exception $e ) {
+			// If we error out, then try it again with utf8_encode() on the open entry fields
+			if ( ! $encode ) {
+				$response = $this->index( $id, true );
+				return $response;
+			} else {
+				// If that failed too, then say which ticket failed.
+				echo "Failed indexing ticket #$id";
+				die();
+			}
+		}
+
 	}
 
 
@@ -88,10 +104,12 @@ class WPElasTrac {
 	/**
 	 * Gets ticket details from a specific ID
 	 *
-	 * @param int $id Track ticket ID number
+	 * @param int  $id     Track ticket ID number
+	 * @param bool $encode Whether or not to run utf8_encode on the open-entry fields
+	 *
 	 * @return mixed Associative array of ticket data or false if no data
 	 */
-	function get_ticket_data( $id ) {
+	function get_ticket_data( $id, $encode = false ) {
 
 		$ticket = $this->trac->getTicket( (string) $id );
 
@@ -107,7 +125,8 @@ class WPElasTrac {
 		$data['ticket_type'] = $ticket['type'];
 		$data['created']     = $ticket['time']->timestamp * 1000;
 		$data['updated']     = $ticket['changetime']->timestamp * 1000;
-		$data['summary']     = mb_convert_encoding( $ticket['summary'], 'UTF-8', 'UTF-8' );
+		$data['summary']     = ( $encode ) ? utf8_encode( $ticket['summary'] ) : $ticket['summary'];
+		$data['description'] = ( $encode ) ? utf8_encode( $ticket['description'] ) : $ticket['description'];
 		$data['reporter']    = $ticket['reporter'];
 		$data['owner']       = $ticket['owner'];
 		$data['milestone']   = $ticket['milestone'];
@@ -117,7 +136,6 @@ class WPElasTrac {
 		$data['component']   = $ticket['component'];
 		$data['keywords']    = ( ! empty( $ticket['keywords'] ) ) ? $this->parse_terms( $ticket['keywords'] ) : array();
 		$data['focuses']     = ( ! empty( $ticket['focuses'] ) ) ? $this->parse_terms( $ticket['focuses'] ) : array();
-		$data['description'] = mb_convert_encoding( $ticket['description'], 'UTF-8', 'UTF-8' );
 		$data['cc']          = $ticket['cc'];
 		$data['resolution']  = $ticket['resolution'];
 
@@ -125,7 +143,7 @@ class WPElasTrac {
 
 		if ( ! empty( $updates ) ) {
 			foreach ( $updates as $item ) {
-				$update = $this->parse_update( $id, $item );
+				$update = $this->parse_update( $id, $item, $encode );
 				// Don't index cc because it can leak emails
 				if ( 'cc' !== $update['update_type'] ) {
 					$data['updates'][] = $update;
@@ -143,12 +161,13 @@ class WPElasTrac {
 	 * Ticket updates are returned as an simple array and can be better indexed by
 	 * assigning keys and doing a bit of processing on them
 	 *
-	 * @param int $id The ID of the ticket to parse
-	 * @param array $item Array data about an individual ticket update
+	 * @param int   $id     The ID of the ticket to parse
+	 * @param array $item   Array data about an individual ticket update
+	 * @param bool  $encode Whether or not to run utf8_encode on the open-entry fields
 	 *
 	 * @return array Associative array of parsed update data
 	 */
-	function parse_update( $id, $item ) {
+	function parse_update( $id, $item, $encode = false ) {
 
 		$data['time']        = $item[0]->timestamp * 1000;
 		$data['user']        = $item[1];
@@ -162,7 +181,7 @@ class WPElasTrac {
 				break;
 
 			case 'comment':
-				$data['comment'] = $item[4];
+				$data['comment'] = ( $encode ) ? utf8_encode( $item[4] ) : $item[4];
 				$comment_info    = explode( '.', $item[3] );
 
 				if ( count( $comment_info ) > 1 ) {
@@ -185,8 +204,10 @@ class WPElasTrac {
 				break;
 
 			default:
-				$data['previous'] = mb_convert_encoding( $item[3], 'UTF-8', 'UTF-8' );
-				$data['new']      = mb_convert_encoding( $item[4], 'UTF-8', 'UTF-8' );
+				if ( $encode ) {
+					$data['previous'] = ( $encode ) ? utf8_encode( $item[3] ) : $item[3];
+					$data['new']      = ( $encode ) ? utf8_encode( $item[4] ) : $item[4];
+				}
 		}
 
 		return $data;
