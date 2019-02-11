@@ -107,7 +107,7 @@ class WPElasTrac {
 		$data['ticket_type'] = $ticket['type'];
 		$data['created']     = $ticket['time']->timestamp * 1000;
 		$data['updated']     = $ticket['changetime']->timestamp * 1000;
-		$data['summary']     = utf8_encode( $ticket['summary'] );
+		$data['summary']     = $ticket['summary'];
 		$data['reporter']    = $ticket['reporter'];
 		$data['owner']       = $ticket['owner'];
 		$data['milestone']   = $ticket['milestone'];
@@ -117,7 +117,7 @@ class WPElasTrac {
 		$data['component']   = $ticket['component'];
 		$data['keywords']    = ( ! empty( $ticket['keywords'] ) ) ? $this->parse_terms( $ticket['keywords'] ) : array();
 		$data['focuses']     = ( ! empty( $ticket['focuses'] ) ) ? $this->parse_terms( $ticket['focuses'] ) : array();
-		$data['description'] = utf8_encode( $ticket['description'] );
+		$data['description'] = $ticket['description'];
 		$data['cc']          = $ticket['cc'];
 		$data['resolution']  = $ticket['resolution'];
 
@@ -157,12 +157,12 @@ class WPElasTrac {
 		switch ( $item[2] ) {
 
 			case 'attachment':
-				$filename     = utf8_encode( $item[4] );
+				$filename     = $item[4];
 				$data['link'] = "https://core.trac.wordpress.org/attachment/ticket/$id/$filename";
 				break;
 
 			case 'comment':
-				$data['comment'] = utf8_encode( $item[4] );
+				$data['comment'] = $item[4];
 				$comment_info    = explode( '.', $item[3] );
 
 				if ( count( $comment_info ) > 1 ) {
@@ -185,8 +185,8 @@ class WPElasTrac {
 				break;
 
 			default:
-				$data['previous'] = utf8_encode( $item[3] );
-				$data['new']      = utf8_encode( $item[4] );
+				$data['previous'] = $item[3];
+				$data['new']      = $item[4];
 		}
 
 		return $data;
