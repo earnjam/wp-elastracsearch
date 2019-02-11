@@ -197,6 +197,7 @@ class WPElasTrac {
 
 				break;
 
+			// Keywords are separated via space
 			case 'keywords':
 			case 'focuses':
 				$data['previous'] = $this->parse_terms( $item[3] );
@@ -216,22 +217,18 @@ class WPElasTrac {
 	/**
 	 * Cleans a string of terms
 	 *
-	 * keywords are returned from trac as space separated, but
-	 * focuses are often comma separated. This will handle either.
+	 * Keywords and Focuses sometimes appear to be comma separated and
+	 * sometimes space separated because who knows...
+	 * This should handle either situation.
 	 *
 	 * @param string $term_string A list of terms as a string
 	 *
 	 * @return array The cleaned list of terms separated into an array
 	 */
-	function parse_terms( $term_string ) {
-		$clean_terms = array();
-		$terms    = explode( ' ', $term_string );
+	function parse_terms( $terms ) {
+		$delimeter = ( strpos( $terms, ',' ) ) ? ',' : ' ';
 
-		foreach ( $terms as $term ) {
-			$clean_terms[] = str_replace( ',', '', $term );
-		}
-
-		return $clean_terms;
+		return array_map( 'trim', explode( $delimeter, $terms ) );
 	}
 
 }
