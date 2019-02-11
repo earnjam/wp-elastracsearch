@@ -115,8 +115,8 @@ class WPElasTrac {
 		$data['severity']    = $ticket['severity'];
 		$data['version']     = $ticket['version'];
 		$data['component']   = $ticket['component'];
-		$data['keywords']    = ( ! empty( $ticket['keywords'] ) ) ? explode( ' ', $ticket['keywords'] ) : array();
-		$data['focuses']     = ( ! empty( $ticket['focuses'] ) ) ? explode( ' ', $ticket['focuses'] ) : array();
+		$data['keywords']    = ( ! empty( $ticket['keywords'] ) ) ? array_map( 'trim', explode( ',', $ticket['keywords'] ) ) : array();
+		$data['focuses']     = ( ! empty( $ticket['focuses'] ) ) ? array_map( 'trim', explode( ',', $ticket['focuses'] ) ) : array();
 		$data['description'] = utf8_encode( $ticket['description'] );
 		$data['cc']          = $ticket['cc'];
 		$data['resolution']  = $ticket['resolution'];
@@ -180,8 +180,8 @@ class WPElasTrac {
 
 			case 'keywords':
 			case 'focuses':
-				$data['previous'] = explode( ' ', utf8_encode( $item[3] ) );
-				$data['new']      = explode( ' ', utf8_encode( $item[4] ) );
+				$data['previous'] = array_map( 'trim', explode( ',', $item[3] ) );
+				$data['new']      = array_map( 'trim', explode( ',', $item[4] ) );
 				break;
 
 			default:
