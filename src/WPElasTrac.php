@@ -205,10 +205,8 @@ class WPElasTrac {
 				break;
 
 			default:
-				if ( $encode ) {
-					$data['previous'] = ( $encode ) ? utf8_encode( $item[3] ) : $item[3];
-					$data['new']      = ( $encode ) ? utf8_encode( $item[4] ) : $item[4];
-				}
+				$data['previous'] = ( $encode ) ? utf8_encode( $item[3] ) : $item[3];
+				$data['new']      = ( $encode ) ? utf8_encode( $item[4] ) : $item[4];
 		}
 
 		return $data;
