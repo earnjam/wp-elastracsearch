@@ -115,8 +115,8 @@ class WPElasTrac {
 		$data['severity']    = $ticket['severity'];
 		$data['version']     = $ticket['version'];
 		$data['component']   = $ticket['component'];
-		$data['keywords']    = ( ! empty( $ticket['keywords'] ) ) ? array_map( 'trim', explode( ',', $ticket['keywords'] ) ) : array();
-		$data['focuses']     = ( ! empty( $ticket['focuses'] ) ) ? array_map( 'trim', explode( ',', $ticket['focuses'] ) ) : array();
+		$data['keywords']    = ( ! empty( $ticket['keywords'] ) ) ? $this->parse_terms( $ticket['keywords'] ) : array();
+		$data['focuses']     = ( ! empty( $ticket['focuses'] ) ) ? $this->parse_terms( $ticket['focuses'] ) : array();
 		$data['description'] = utf8_encode( $ticket['description'] );
 		$data['cc']          = $ticket['cc'];
 		$data['resolution']  = $ticket['resolution'];
@@ -180,8 +180,8 @@ class WPElasTrac {
 
 			case 'keywords':
 			case 'focuses':
-				$data['previous'] = array_map( 'trim', explode( ',', $item[3] ) );
-				$data['new']      = array_map( 'trim', explode( ',', $item[4] ) );
+				$data['previous'] = $this->parse_terms( $item[3] );
+				$data['new']      = $this->parse_terms( $item[4] );
 				break;
 
 			default:
@@ -190,6 +190,27 @@ class WPElasTrac {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Cleans a string of terms
+	 *
+	 * keywords are returned from trac as space separated, but
+	 * focuses are often comma separated. This will handle either.
+	 *
+	 * @param string $term_string A list of terms as a string
+	 *
+	 * @return array The cleaned list of terms separated into an array
+	 */
+	function parse_terms( $term_string ) {
+		$clean_terms = array();
+		$terms    = explode( ' ', $term_string );
+
+		foreach ( $terms as $term ) {
+			$clean_terms[] = str_replace( ',', '', $term );
+		}
+
+		return $clean_terms;
 	}
 
 }
