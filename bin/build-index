@@ -27,7 +27,8 @@ $last_ticket = str_getcsv( file_get_contents( $last_ticket_csv ), "\n" );
 $last_ticket_id = $last_ticket[1];
 
 // Index all the tickets!
-for ( $id = 1; $id <= $last_ticket_id; $id++ ) {
+$min = ( $argc > 1 ) ? $argv[1] : 1;
+for ( $id = $min; $id <= $last_ticket_id; $id++ ) {
 	$status = $wpelastrac->index( $id );
     $progress->update($id, $last_ticket_id);
 }
