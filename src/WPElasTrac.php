@@ -107,7 +107,7 @@ class WPElasTrac {
 		$data['ticket_type'] = $ticket['type'];
 		$data['created']     = $ticket['time']->timestamp * 1000;
 		$data['updated']     = $ticket['changetime']->timestamp * 1000;
-		$data['summary']     = $ticket['summary'];
+		$data['summary']     = mb_convert_encoding( $ticket['summary'], 'UTF-8', 'UTF-8' );
 		$data['reporter']    = $ticket['reporter'];
 		$data['owner']       = $ticket['owner'];
 		$data['milestone']   = $ticket['milestone'];
@@ -117,7 +117,7 @@ class WPElasTrac {
 		$data['component']   = $ticket['component'];
 		$data['keywords']    = ( ! empty( $ticket['keywords'] ) ) ? $this->parse_terms( $ticket['keywords'] ) : array();
 		$data['focuses']     = ( ! empty( $ticket['focuses'] ) ) ? $this->parse_terms( $ticket['focuses'] ) : array();
-		$data['description'] = $ticket['description'];
+		$data['description'] = mb_convert_encoding( $ticket['description'], 'UTF-8', 'UTF-8' );
 		$data['cc']          = $ticket['cc'];
 		$data['resolution']  = $ticket['resolution'];
 
@@ -185,8 +185,8 @@ class WPElasTrac {
 				break;
 
 			default:
-				$data['previous'] = $item[3];
-				$data['new']      = $item[4];
+				$data['previous'] = mb_convert_encoding( $item[3], 'UTF-8', 'UTF-8' );
+				$data['new']      = mb_convert_encoding( $item[4], 'UTF-8', 'UTF-8' );
 		}
 
 		return $data;
