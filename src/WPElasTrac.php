@@ -176,7 +176,7 @@ class WPElasTrac {
 		switch ( $item[2] ) {
 
 			case 'attachment':
-				$filename     = $item[4];
+				$filename     = ( $encode ) ? utf8_encode( $item[4] ) : $item[4];
 				$data['link'] = "https://core.trac.wordpress.org/attachment/ticket/$id/$filename";
 				break;
 
