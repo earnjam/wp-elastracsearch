@@ -197,11 +197,11 @@ class WPElasTrac {
 
 				break;
 
-			// Keywords are separated via space
+			// Break up keywords and focuses strings into arrays
 			case 'keywords':
 			case 'focuses':
-				$data['previous'] = $this->parse_terms( $item[3] );
-				$data['new']      = $this->parse_terms( $item[4] );
+				$data['previous_terms'] = $this->parse_terms( $item[3] );
+				$data['new_terms']      = $this->parse_terms( $item[4] );
 				break;
 
 			default:
