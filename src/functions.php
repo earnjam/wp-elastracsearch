@@ -4,15 +4,11 @@ namespace earnjam;
 
 function index_stats( $start, $end ) {
 
-	echo "Getting tickets...\n";
-
 	// Get the tickets opened in the time period
 	$tickets = get_tickets_in_timeframe( $start, $end );
 
 	// Loop through and reset their values to original and index in temp index
 	foreach ( $tickets as $raw_ticket ) {
-
-		echo 'Resetting ticket #' . $raw_ticket['_id'] . "\n";
 
 		$ticket = $raw_ticket['_source'];
 
@@ -48,12 +44,9 @@ function index_stats( $start, $end ) {
 
 		unset( $ticket['updates'] );
 
-		echo 'Indexing original ticket #' . $raw_ticket['_id'] . "\n";
 		index_ticket( $raw_ticket['_id'], $ticket );
 
 	}
-
-	echo "=========\nGetting Updates\n";
 
 	// Get all ticket updates during time period
 	$updates = get_updates_in_timeframe( $start, $end );
@@ -62,7 +55,6 @@ function index_stats( $start, $end ) {
 	foreach ( $updates as $update ) {
 
 		$id = $update['_id'];
-		echo "Applying update to ticket #$id\n";
 
 		$ticket = get_ticket( $id );
 
@@ -70,13 +62,9 @@ function index_stats( $start, $end ) {
 
 		$ticket[ $update['update_type'] ] = ( $update['update_type'] === 'keywords' ) ? $update['new_terms'] : $update['new'];
 
-		echo "Re-indexing ticket #$id\n";
-
 		index_ticket( $id, $ticket );
 
 	}
-
-	echo "=========\nPreparing to index stats\n==========\n";
 
 	// Gather the stats and index them
 	index_data( $start );
@@ -266,7 +254,7 @@ function index_data( $start ) {
 
 	$response = $loc_es->index( $payload );
 
-	echo "=========\nIndexed $id\n=========\n";
+	echo "=========\nIndexed $id\n";
 
 }
 
