@@ -1,0 +1,45 @@
+#!/usr/bin/env php
+<?php
+
+namespace earnjam;
+use Elasticsearch\ClientBuilder;
+
+ini_set('display_errors', 1);
+
+// Prevent any potential timeouts
+set_time_limit( 0 );
+
+// Autoload our required classes and libraries
+require dirname( dirname( __FILE__ ) ) . '/vendor/autoload.php';
+
+require dirname( dirname( __FILE__ ) ) . '/src/functions.php';
+
+echo "Start!\n";
+
+$hosts = [
+	'host' => 'es.wpteamhub.com',
+	'port' => '80',
+	'scheme' => 'https'
+];
+$hub_es = ClientBuilder::create()->setHosts( $hosts )->build();
+$loc_es = ClientBuilder::create()->setHosts( array( 'localhost:9200' ) )->build();
+
+echo "Loaded!\n";
+
+// Beginning of the day on 2004-06-10; Date ticket #1 was created;
+$start = 1086825601000;
+// Last update as of the time of creation of this script
+$final = 1582249178000;
+// Total time in miliseconds that we are going to cover in the script
+$total_time = $final - $start;
+
+// Index loop
+while ( $start < 1582249178000 ) {
+
+	// Set end to 1 day later
+	$end = $start + ( 1000 * 60 * 60 * 24 );
+	index_stats( $start, $end );
+	// Bump to the next time period
+	$start = $end;
+
+}
