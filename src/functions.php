@@ -316,6 +316,7 @@ function extract_components( $data ) {
 			'milestone'   => $milestones,
 		);
 	}
+	return $components;
 }
 
 function recursive_extractor( $data ) {
