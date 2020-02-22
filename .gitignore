@@ -1,2 +1,6 @@
+# Composer
 composer.lock
 /vendor/*
+
+# Prevent accidental inclusion of config
+config.php
