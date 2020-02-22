@@ -239,7 +239,7 @@ function index_data( $start ) {
 	$aggs   = $open['aggregations'];
 
 	$doc = array(
-		'timestamp'   => $start,
+		'time'        => $start,
 		'total'       => $all['hits']['total'],
 		'open'        => $open['hits']['total'],
 		'ticket_type' => extract_ticket_types( $aggs['ticket_type'] ),
