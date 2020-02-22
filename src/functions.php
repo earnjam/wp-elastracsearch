@@ -20,6 +20,10 @@ function index_stats( $start, $end ) {
 			'component' => 'previous',
 		);
 
+		if ( ! $ticket['updates'] ) {
+			continue;
+		}
+
 		// Loop through all the updates
 		foreach ( $ticket['updates'] as $update ) {
 
