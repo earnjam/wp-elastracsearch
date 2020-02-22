@@ -1,0 +1,166 @@
+{
+	"properties": {
+		"timestamp": {
+			"type": "date"
+		},
+		"active_release": {
+			"type": "keyword"
+		},
+		"count_tickets": {
+			"type": "long"
+		},
+		"open_tickets": {
+			"type": "short"
+		},
+		"ticket_type": {
+			"properties": {
+				"key": {
+					"type": "keyword"
+				},
+				"count": {
+					"type": "short"
+				}
+			}
+		},
+		"keyword": {
+			"properties": {
+				"key": {
+					"type": "keyword"
+				},
+				"count": {
+					"type": "short"
+				},
+				"ticket_type": {
+					"properties": {
+						"key": {
+							"type": "keyword"
+						},
+						"count": {
+							"type": "short"
+						}
+					}
+				}
+			}
+		},
+		"milestone": {
+			"properties": {
+				"key": {
+					"type": "keyword"
+				},
+				"count": {
+					"type": "short"
+				},
+				"ticket_type": {
+					"properties": {
+						"key": {
+							"type": "keyword"
+						},
+						"count": {
+							"type": "short"
+						}
+					}
+				},
+				"keyword": {
+					"properties": {
+						"key": {
+							"type": "keyword"
+						},
+						"count": {
+							"type": "short"
+						},
+						"ticket_type": {
+							"properties": {
+								"key": {
+									"type": "keyword"
+								},
+								"count": {
+									"type": "short"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"component": {
+			"properties": {
+				"key": {
+					"type": "keyword"
+				},
+				"count": {
+					"type": "short"
+				},
+				"ticket_type": {
+					"properties": {
+						"key": {
+							"type": "keyword"
+						},
+						"count": {
+							"type": "short"
+						}
+					}
+				},
+				"keyword": {
+					"properties": {
+						"key": {
+							"type": "keyword"
+						},
+						"count": {
+							"type": "short"
+						},
+						"ticket_type": {
+							"properties": {
+								"key": {
+									"type": "keyword"
+								},
+								"count": {
+									"type": "short"
+								}
+							}
+						}
+					}
+				},
+				"milestone": {
+					"properties": {
+						"key": {
+							"type": "keyword"
+						},
+						"count": {
+							"type": "short"
+						},
+						"ticket_type": {
+							"properties": {
+								"key": {
+									"type": "keyword"
+								},
+								"count": {
+									"type": "short"
+								}
+							}
+						},
+						"keyword": {
+							"properties": {
+								"key": {
+									"type": "keyword"
+								},
+								"count": {
+									"type": "short"
+								},
+								"ticket_type": {
+									"properties": {
+										"key": {
+											"type": "keyword"
+										},
+										"count": {
+											"type": "short"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

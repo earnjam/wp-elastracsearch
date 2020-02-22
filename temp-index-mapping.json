@@ -1,0 +1,19 @@
+{
+	"properties": {
+		"component": {
+			"type": "keyword"
+		},
+		"keywords": {
+			"type": "keyword"
+		},
+		"milestone": {
+			"type": "keyword"
+		},
+		"status": {
+			"type": "keyword"
+		},
+		"ticket_type": {
+			"type": "keyword"
+		}
+	}
+}
