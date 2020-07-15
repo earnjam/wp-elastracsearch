@@ -33,14 +33,14 @@ $last_updated_ticket = $wpelastrac->client->search( $last_update_query );
 $last_update = urlencode( date( 'm/d/Y H:i:s', ( $last_updated_ticket['hits']['hits'][0]['_source']['updated'] / 1000 ) + 1 ) );
 
 // URL to get a CSV list of ticket IDs that have been updated since the above date
-$trac_activity = "https://core.trac.wordpress.org/query?status=accepted&status=assigned&status=closed&status=new&status=reopened&status=reviewing&changetime=$last_update..&col=id&order=changetime&format=csv";
+$trac_activity_url = "https://core.trac.wordpress.org/query?status=accepted&status=assigned&status=closed&status=new&status=reopened&status=reviewing&changetime=$last_update..&col=id&order=changetime&format=csv";
 $options = array(
 	'http' => array(
 		'header' => "User-Agent: WPTracsearch; https://tracsearch.wpteamhub.com"
 	)
 );
 $context = stream_context_create( $options );
-$updated_tickets = str_getcsv( file_get_contents( $trac_activity ), "\n", $context );
+$updated_tickets = str_getcsv( file_get_contents( $trac_activity_url, false, $context ), "\n" );
 // Remove the header line from the CSV
 array_shift( $updated_tickets );
 
